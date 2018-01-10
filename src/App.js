@@ -27,10 +27,20 @@ class SelectDrop extends React.Component {
     );
   }
 }
-class ListBooks extends React.Component{
+
+class ListBooksCurrent extends React.Component{
+  state = {
+    readStatus: []
+  }
+  componentDidUpdate() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ readStatus:books.filter((book)=>(book.shelf==="currentlyReading")) })
+    })}
+
+
   render(){
 
-    const books = this.props.books
+    const books = this.state.readStatus
     return <ol className="books-grid">
     {books.map((book) => (
     <li  key={book.id} >
@@ -50,6 +60,72 @@ class ListBooks extends React.Component{
    </ol>
   }
 }
+class ListBooksWant extends React.Component{
+  state = {
+    readStatus: []
+  }
+  componentDidUpdate() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ readStatus:books.filter((book)=>(book.shelf==="wantToRead")) })
+    })}
+
+
+  render(){
+
+    const books = this.state.readStatus
+    return <ol className="books-grid">
+    {books.map((book) => (
+    <li  key={book.id} >
+        <div className='book'>
+           <div className="book-top">
+              <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
+              <div className="book-shelf-changer">
+              <SelectDrop book = {book}/>
+              </div>
+           </div>
+           <div className="book-title">{book.title}</div>
+           <div className="book-authors">{book.authors}</div>
+        </div>
+    </li>
+ 
+  ))}
+   </ol>
+  }
+}
+
+class ListBooksRead extends React.Component{
+  state = {
+    readStatus: []
+  }
+  componentDidUpdate() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ readStatus:books.filter((book)=>(book.shelf==="read")) })
+    })}
+
+
+  render(){
+
+    const books = this.state.readStatus
+    return <ol className="books-grid">
+    {books.map((book) => (
+    <li  key={book.id} >
+        <div className='book'>
+           <div className="book-top">
+              <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
+              <div className="book-shelf-changer">
+              <SelectDrop book = {book}/>
+              </div>
+           </div>
+           <div className="book-title">{book.title}</div>
+           <div className="book-authors">{book.authors}</div>
+        </div>
+    </li>
+ 
+  ))}
+   </ol>
+  }
+}
+
 class BooksApp extends React.Component {
   state = {
     /**
@@ -81,21 +157,21 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
         
-                    <ListBooks books = {this.state.books.filter((book)=>(book.shelf==="currentlyReading"))}/>
+                 <ListBooksCurrent books = {this.state.books}/>
 
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
-                  <ListBooks books = {this.state.books.filter((book)=>(book.shelf==="wantToRead"))}/>
+                  <ListBooksWant books = {this.state.books}/>
 
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
-                  <ListBooks books = {this.state.books.filter((book)=>(book.shelf==="read"))}/>
+                  <ListBooksRead books = {this.state.books}/>
 
                   </div>
                 </div>
