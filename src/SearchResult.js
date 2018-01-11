@@ -8,22 +8,45 @@ class SearchResult extends React.Component {
         result: []
       }
 
-      componentDidMount(){
-        BooksAPI.search(this.props.query).then((books) => {
-            this.setState({ result:books })
-          })
-    }
 
-    componentDidUpdate() {
+      componentWillReceiveProps() {
+        let resultBooks = []
         BooksAPI.search(this.props.query).then((books) => {
-            this.setState({ result:books })
-          })
-      }
+            if(typeof books !=='undefined'){
+            
+            let titleList = []
+           
+            BooksAPI.getAll().then((booksInShelf) => {
+                for(let i=0;i<booksInShelf.length;i++){
+                    titleList.push(booksInShelf[i].title)
+
+                }
+            
+
+                for(let i=0;i<books.length;i++){
+                    if (titleList.includes(books[i].title)){
+                        function isTheBook(book) { 
+                            return book.title === books[i].title;}
+                      resultBooks.push(booksInShelf.find(isTheBook))
+
+                    }else{
+                      resultBooks.push(books[i])
+                  }
+                  this.setState({ result:resultBooks })  
+
+              }})
+           
+
+        
+      }})
+        
+}
   render(){
     const books = this.state.result
 
-      return        <ol className="books-grid">         
-      {books.map((book) => (
+      return       <ol className="books-grid">         
+      
+           {(typeof(books!=='undefined')|| books!==[]|| books) && books.map((book) => (
                         <li  key={book.id} >
                             <div className='book'>
                             <div className="book-top">
@@ -37,6 +60,7 @@ class SearchResult extends React.Component {
                             </div>
                         </li>
                 ))}  
+                
                               </ol>
 
         

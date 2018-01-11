@@ -6,7 +6,7 @@ import SearchResult from './SearchResult';
 
 class SearchBooks extends React.Component {
     state = {
-        query: 'Android'
+        query: ''
       }
       updateQuery = (query) => {
         this.setState({ query: query.trim() })
